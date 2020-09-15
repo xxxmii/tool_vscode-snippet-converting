@@ -6,31 +6,99 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title></title>
-  <meta name="description" content="">
-  <!-- OGP -->
-  <meta property="og:type" content="website">
-  <meta property="og:site_name" content="">
-  <meta property="og:description" content="">
-  <meta property="og:title" content="">
-  <meta property="og:url" content="">
-  <meta name="twitter:card" content="summary_large_image">
-  <meta property="og:image" content="/ogp.jpg"> <!-- URLが決まったら絶対パスで入れる -->
+  <meta name="description" content="VSCodeスニペット変換ツール">
   <!-- CSS -->
   <link rel="stylesheet" href="./assets/css/style.css">
   <!-- Icons -->
   <link rel="icon" href="./assets/img/favicon.png">
-  <link rel="apple-touch-icon" sizes="180x180" href="./assets/img/apple-touch-icon.png">
+
+  <!-- font -->
+  <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;500;700&display=swap"
+    rel="stylesheet">
+
+  <script src="https://cdn.jsdelivr.net/npm/vue"></script>
 </head>
 
 <body>
   <main class="main">
     <div class="inner">
-      <h1>VSCode スニペット変換ツール</h1>
+      <h1 class="heading">VSCode スニペット変換ツール</h1>
+      <div id="app">
+        <div class="form">
+          <div class="form__item">
+            <label class="form__label" for="name">スニペット名</label><input type="text" class="form__input"
+              v-model="snippet.name" id="name" placeholder="任意">
+          </div>
+          <div class="form__item">
+            <label class="form__label" for="prefix">prefix</label><input type="text" class="form__input"
+              v-model="snippet.prefix" id="prefix">
+          </div>
+          <div class="form__item">
+            <label class="form__label" for="description">description</label><input type="text" class="form__input"
+              v-model="snippet.description" id="description" placeholder="任意">
+          </div>
+          <div class="form__item">
+            <label class="form__label" for="body">body</label><textarea class="form__input form__input--textarea"
+              v-model="snippet.body" id="body">
+            </textarea>
+          </div>
+        </div>
+        <div class="btn__area">
+          <button class="btn" @click="convert">変換</button>
+        </div>
+        <div class="result">
+          <textarea v-model="result" class="form__input form__input--result"></textarea>
+        </div>
+      </div>
     </div>
   </main>
-  <!-- script -->
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-  <script type="text/javascript" src="./assets/js/common.min.js"></script>
 </body>
 
 </html>
+
+<script>
+  const reg = /"/g;
+  const double = "\"";
+  const comma = ","
+  const targetEscape = "\\\"";
+  const linefeed = "\n";
+  const tab = "    ";
+
+  var app = new Vue({
+    el: '#app',
+    data: {
+      snippet: {
+        name: '',
+        prefix: '',
+        description: '',
+        body: '',
+      },
+      result: ''
+    },
+    methods: {
+      convert() {
+        let snippet = this.snippet;
+        snippet.name = !snippet.name ? snippet.prefix : snippet.name;
+        this.result = this.addDouble(snippet.name) + ": {" + linefeed;
+        this.result += tab + this.addDouble("prefix") + ": " + this.addDouble(snippet.prefix) + comma + linefeed;
+        this.result += !snippet.description ? '' : tab + this.addDouble("description") + ": " + this.addDouble(snippet.description) + comma + linefeed;
+        this.result += tab + this.addDouble("body") + ": [" + linefeed
+
+        let lines = snippet.body.split('\n');
+
+        for (const value of lines) {
+          this.result += tab + tab + this.addDouble(value.replace(reg, targetEscape)) + comma + linefeed;
+        }
+
+        this.result += tab + "]" + linefeed;
+        this.result += "},";
+
+        console.log(this.result);
+
+      },
+      addDouble(value) {
+        return double + value + double;
+      }
+    }
+  })
+</script>
