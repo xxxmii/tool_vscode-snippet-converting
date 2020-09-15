@@ -63,6 +63,7 @@
 <script>
 
   const reg = /"/g;
+  const countTarget = "$$";
   const double = "\"";
   const comma = ","
   const targetEscape = "\\\"";
@@ -79,11 +80,28 @@
         description: '',
         body: '',
       },
+      count: 1,
+      isConvert: false,
       result: ''
     },
     methods: {
       convert() {
+        this.count = 1;
         let snippet = this.snippet;
+        this.isConvert = false;
+
+        // $$を「$数値」に変換
+        do {
+          if (snippet.body.includes(countTarget)) {
+            snippet.body = snippet.body.replace(countTarget, "\$" + this.count);
+            this.count++;
+          } else {
+            this.isConvert = true;
+          }
+
+        } while (!this.isConvert);
+
+        // json変換
         snippet.name = !snippet.name ? snippet.prefix : snippet.name;
         this.result = this.addDouble(snippet.name) + ": {" + linefeed;
         this.result += tab + this.addDouble("prefix") + ": " + this.addDouble(snippet.prefix) + comma + linefeed;
@@ -98,8 +116,6 @@
 
         this.result += tab + "]" + linefeed;
         this.result += "},";
-
-        console.log(this.result);
 
       },
       addDouble(value) {
