@@ -17,6 +17,7 @@
     rel="stylesheet">
 
   <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+
 </head>
 
 <body>
@@ -49,6 +50,9 @@
         <div class="result">
           <textarea v-model="result" class="form__input form__input--result"></textarea>
         </div>
+        <div class="btn-copy__area">
+          <button class="btn-copy" @click="copy">コピー</button>
+        </div>
       </div>
     </div>
   </main>
@@ -57,12 +61,14 @@
 </html>
 
 <script>
+
   const reg = /"/g;
   const double = "\"";
   const comma = ","
   const targetEscape = "\\\"";
   const linefeed = "\n";
   const tab = "    ";
+
 
   var app = new Vue({
     el: '#app',
@@ -98,6 +104,11 @@
       },
       addDouble(value) {
         return double + value + double;
+      },
+      copy() {
+        navigator.clipboard.writeText(this.result).catch((e) => {
+          console.error(e)
+        });
       }
     }
   })

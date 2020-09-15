@@ -26,6 +26,20 @@
     color: $main-color;
 }
 
+.btn-copy__area {
+    max-width: 800px;
+    margin: 0 auto;
+    text-align: right;
+}
+.btn-copy {
+    background-color: $accent-color;
+    font-size: rem(12);
+    color: white;
+    padding: 3px 8px;
+    border-radius: 30px;
+    cursor: pointer;
+}
+
 .form {
     max-width: 800px;
     margin: 0 auto;
@@ -70,7 +84,7 @@
 }
 .result {
     max-width: 800px;
-    margin: 0 auto;
+    margin: 0 auto 10px;
 
     &__text {
         // max-width: 80%;
